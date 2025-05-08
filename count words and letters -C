@@ -1,0 +1,29 @@
+#include <stdio.h>
+#include <ctype.h> 
+
+int main() {
+    char sentence[1000];
+    int letters = 0, words = 0;
+    int i = 0, inWord = 0;
+
+    printf("Enter a sentence: ");
+    fgets(sentence, sizeof(sentence), stdin);  // Read input including spaces
+
+    while (sentence[i] != '\0') {
+        if (isalpha(sentence[i])) {
+            letters++;
+            if (!inWord) {
+                words++;
+                inWord = 1;
+            }
+        } else if (isspace(sentence[i])) {
+            inWord = 0;
+        }
+        i++;
+    }
+
+    printf("Letters: %d\n", letters);
+    printf("Words: %d\n", words);
+
+    return 0;
+}
