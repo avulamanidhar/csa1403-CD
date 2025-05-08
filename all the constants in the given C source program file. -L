@@ -1,0 +1,48 @@
+%{
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+%}
+
+/* Define patterns */
+WHITE_SPACE    [ \t]+
+NEW_LINE       \n
+COMMENT        \/\*([^*]|\*+[^*/])*\*+\/|\/\/.*
+IDENTIFIER     [a-zA-Z_][a-zA-Z0-9_]*
+NUMBER         [0-9]+(\.[0-9]+)?
+STRING_LITERAL \"([^\"]|\\\")*\"
+DEFINE_CONST   \#define[ \t]+[a-zA-Z_][a-zA-Z0-9_]*[ \t]+[0-9]+(\.[0-9]+)?
+
+%%
+
+{DEFINE_CONST} { printf("Constant: %s\n", yytext); }
+{NUMBER}       { printf("Constant: %s\n", yytext); }
+{WHITE_SPACE}  { /* Ignore spaces */ }
+{NEW_LINE}     { /* Ignore new lines */ }
+{COMMENT}      { /* Ignore comments */ }
+{IDENTIFIER}   { /* Ignore identifiers */ }
+{STRING_LITERAL}{ /* Ignore string literals */ }
+.              { /* Ignore other characters */ }
+
+%%
+
+int main(int argc, char *argv[]) {
+    FILE *file;
+    if (argc != 2) {
+        printf("Usage: %s <filename>\n", argv[0]);
+        return 1;
+    }
+    file = fopen(argv[1], "r");
+    if (!file) {
+        printf("Error opening file!\n");
+        return 1;
+    }
+    yyin = file;
+    yylex();
+    fclose(file);
+    return 0;
+}
+
+int yywrap() {
+    return 1;
+}
